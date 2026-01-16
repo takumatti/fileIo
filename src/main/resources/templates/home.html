@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - ホーム画面</title>
+	<link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+<header class="header">
+    <h1>ファイル入出力 練習アプリ</h1>
+    <p>CSV / Excel / PDF（予定）</p>
+</header>
+<main class="container">
+	<section class="card">
+    	<h2>エクスポート</h2>
+    	<div class="button-group">
+        	<a th:href="@{/export/csv}" class="btn primary">CSV 出力</a>
+        	<a th:href="@{/export/excel}" class="btn primary">Excel 出力</a>
+        	<button class="btn disabled" disabled>PDF 出力（予定）</button>
+    	</div>
+	</section>
+	<section class="card">
+    	<h2>インポート</h2>
+    	<div class="button-group">
+        	<a th:href="@{/import/csv}" class="btn success">CSV 取込</a>
+        	<a th:href="@{/import/excel}" class="btn success">Excel 取込</a>
+    	</div>
+	</section>
+</main>
+</body>
+</html>
