@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - CSV出力</title>
+	<link rel="stylesheet" th:href="@{/css/dbView/dbView.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>DBビュー</h1>
+	<p>Schema / Table 参照</p>
+</header>
+
+<main class="container">
+	<!-- 検索条件 -->
+	<section class="search-area">
+		<form id="dbViewForm" method="post" class="search-form">
+			<div class="form-group">
+				<label>Schema</label>
+				<select id="schemaSelect" name="schemaName">
+					<option value="">-- Schema選択 --</option>
+					<option th:each="schema : ${schemaList}" th:value="${schema}"
+						th:text="${schema}"th:selected="${schema == schemaName}">
+					</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Table</label>
+				<select id="tableSelect" name="tableName">
+					<option value="">-- Table選択 --</option>
+					<option th:each="table : ${tableList}" th:value="${table}"
+						th:text="${table}" th:selected="${table == tableName}">
+				</select>
+			</div>
+
+		    <div class="form-group">
+				<label>文字コード</label>
+			    	<select name="encoding">
+						<option value="UTF-8" selected>UTF-8</option>
+						<option value="SHIFT_JIS">Shift-JIS</option>
+					</select>
+			</div>
+			
+			<div class="btn-area">
+				<button type="submit" class="btn primary" onclick="submitSearch(event)">
+					検索
+				</button>
+				<button type="submit" class="btn success" th:disabled="${dataList == null}" onclick="submitCsv(event)">
+					CSV出力
+				</button>
+				<button type="submit" class="btn success" th:disabled="${dataList == null}" onclick="submitExcel(event)">
+					Excel出力
+				</button>
+				<button type="submit" class="btn primary" onclick="submitReset(event)">
+					リセット
+				</button>
+			</div>
+		</form>
+
+	</section>
+	<!-- 明細一覧 -->
+	<section class="result-area">
+		<table th:if="${dataList != null}">
+			<thead>
+				<tr>
+					<th th:each="col : ${columnInfoList}" th:text="${col.columnName}"></th>
+				</tr>
+				<tr>
+					<th th:each="col : ${columnInfoList}" th:text="${col.columnType}"></th>
+				</tr>
+				<tr>
+					<th th:each="col : ${columnInfoList}" th:text="${col.isNullable ? 'NOT NULL' : ''}"></th>
+				</tr>
+				<tr>
+					<th th:each="col : ${columnInfoList}" th:text="${col.primaryKey ? 'PK' : ''}"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${dataList}">
+					<td th:each="val : ${row.values()}" th:text="${val}"></td>
+				</tr>
+			</tbody>
+        </table>
+		<div class="no-data" th:if="${dataList == null}">
+			検索してください
+		</div>
+	</section>
+</main>
+<script th:inline="javascript">
+document.addEventListener("DOMContentLoaded", function () {
+	const schemaSelect = document.getElementById("schemaSelect");
+	const tableSelect = document.getElementById("tableSelect");
+	const form = document.getElementById("dbViewForm");
+	
+	function loadTables(schemaName) {
+		tableSelect.innerHTML = '<option value="">-- Table選択 --</option>';
+		if (!schemaName) return;
+		
+		fetch('/dbView/tables?schemaName=' + encodeURIComponent(schemaName))
+			.then(response => response.json())
+			.then(tableList => {
+				tableList.forEach(table => {
+					const option = document.createElement("option");
+					option.value = table;
+					option.textContent = table;
+					tableSelect.appendChild(option);
+				});
+			})
+			.catch(error => {
+				console.error('テーブル取得エラー:', error);
+		});
+	}
+	
+	schemaSelect.addEventListener("change", function () {
+		loadTables(this.value, null);
+	});
+	
+	// 検索ボタン押下
+	window.submitSearch = function (e) {
+		e.preventDefault();
+		form.action = '/dbView/search';
+		form.submit();
+	}
+	
+	// CSV出力ボタン押下
+	window.submitCsv  = function (e) {
+		e.preventDefault();
+		form.action = '/dbView/csvOutput';
+		form.submit();
+	}
+	
+	// Excel出力ボタン押下
+	window.submitExcel = function(e){
+		e.preventDefault();
+		form.action = "/dbView/excelOutput";
+		form.submit();
+	}
+	
+	// リセットボタン押下
+	window.submitReset = function(e){
+		e.preventDefault();
+		form.action = "/dbView";
+		form.submit();
+	}
+		
+});
+</script>
+</body>
+</html>

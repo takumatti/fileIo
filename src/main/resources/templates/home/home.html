@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>fileIo - ホーム画面</title>
-	<link rel="stylesheet" th:href="@{/css/home.css}">
+	<link rel="stylesheet" th:href="@{/css/home/home.css}">
 </head>
 <body>
 <header class="header">
@@ -26,6 +26,15 @@
         	<a th:href="@{/import/excel}" class="btn success">Excel 取込</a>
     	</div>
 	</section>
+	<section class="card">
+	    <h2>DBビュー</h2>
+	    <div class="button-group">
+	        <a th:href="@{/dbView}" class="btn primary">
+	            DB / テーブル参照
+	        </a>
+	    </div>
+	</section>
+
 </main>
 </body>
 </html>

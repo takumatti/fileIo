@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+}
+
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.container {
+    padding: 20px;
+}
+
+.search-area {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+select {
+    padding: 6px;
+    min-width: 200px;
+}
+
+.btn {
+    padding: 8px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn.primary {
+    background: #3498db;
+    color: white;
+}
+
+.result-area {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    font-size: 14px;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+.db-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.db-table th, .db-table td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.db-table th div {
+    margin-bottom: 2px;
+    font-size: 0.85em;
+    color: #333;
+}
+
+.db-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
