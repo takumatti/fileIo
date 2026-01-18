@@ -88,7 +88,7 @@ public class CsvExportSampleController {
 	 * 
 	 * @param session	セッション情報
 	 * @param model		モデル情報
-	 * @return
+	 * @return			HTML情報
 	 */
 	@GetMapping("/result")
 	public String result(

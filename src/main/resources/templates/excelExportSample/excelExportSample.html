@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - Excel出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/dbView/dbView.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>Excel出力サンプル</h1>
+	<p>エスケープ処理含む</p>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/excelExportSample/update}" method="post" class="search-form">
+			<button type="submit" class="btn success">
+				excel出力
+			</button>
+		</form>
+	</section>
+
+	<!-- 一覧 -->
+	<section class="result-area">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名前</th>
+					<th>有効</th>
+					<th>生年月日</th>
+					<th>作成日時</th>
+					<th>スコア</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${list}">
+					<td th:text="${row.id}"></td>
+					<td th:text="${row.name}"></td>
+					<td th:text="${row.active}"></td>
+					<td th:text="${row.birthDate}"></td>
+					<td th:text="${#temporals.format(row.updatedAt, 'yyyy/MM/dd HH:mm:ss')}"></td>
+					<td th:text="${row.score}"></td>
+					<td th:text="${row.note}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<!-- excelダウンロード用（自動submit） -->
+	<form id="downloadForm"
+	      th:action="@{/excelExportSample/download}"
+	      method="post">
+	</form>
+</main>
+<script th:inline="javascript">
+	window.onload = function () {
+		const autoDownload = /*[[${autoDownload}]]*/ false;
+		
+		if (autoDownload) {
+			document.getElementById("downloadForm").submit();
+		}
+	};
+</script>
+
+</body>
+</html>

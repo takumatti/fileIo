@@ -25,16 +25,6 @@ public class HomeController {
     }
 
     /**
-	 * Excel出力画面遷移
-	 * 
-	 * @return	HTML情報
-	 */
-    @GetMapping("/export/excel")
-    public String exportExcelPage() {
-        return "export-excel";
-    }
-
-    /**
 	 * CSV取込画面遷移
 	 * 
 	 * @return	HTML情報
