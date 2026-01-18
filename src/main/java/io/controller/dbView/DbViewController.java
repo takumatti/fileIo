@@ -27,6 +27,9 @@ import io.service.excel.ExcelService;
 @RequestMapping("/dbView")
 public class DbViewController {
 
+	/**
+	 * HTMLテンプレートパス
+	 */
 	private static final String LIST_HTML_TEMPLATE_FILE_PATH = "dbView/dbView";
 
 	/**

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - CSV出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/dbView/dbView.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>CSV出力サンプル</h1>
+	<p>エスケープ処理含む</p>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/csvExportSample/update}" method="post" class="search-form">
+			<div class="form-group">
+				<label>文字コード</label>
+				<select name="encoding">
+					<option value="UTF-8" selected>UTF-8</option>
+					<option value="SHIFT_JIS">Shift-JIS</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label>ダブルクォート</label>
+				<select name="quoteMode">
+					<option value="ALL" selected>すべて囲う</option>
+					<option value="NONE">囲わない</option>
+				</select>
+			</div>
+
+			<button type="submit" class="btn success">
+				CSV出力
+			</button>
+		</form>
+	</section>
+
+	<!-- 一覧 -->
+	<section class="result-area">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名前</th>
+					<th>有効</th>
+					<th>生年月日</th>
+					<th>作成日時</th>
+					<th>スコア</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${list}">
+					<td th:text="${row.id}"></td>
+					<td th:text="${row.name}"></td>
+					<td th:text="${row.active}"></td>
+					<td th:text="${row.birthDate}"></td>
+					<td th:text="${#temporals.format(row.updatedAt, 'yyyy/MM/dd HH:mm:ss')}"></td>
+					<td th:text="${row.score}"></td>
+					<td th:text="${row.note}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<!-- CSVダウンロード用（自動submit） -->
+	<form id="downloadForm"
+	      th:action="@{/csvExportSample/download}"
+	      method="post">
+		<input type="hidden" name="encoding" th:value="${encoding}">
+		<input type="hidden" name="quoteMode" th:value="${quoteMode}">
+	</form>
+</main>
+<script th:inline="javascript">
+	window.onload = function () {
+		const autoDownload = /*[[${autoDownload}]]*/ false;
+		
+		if (autoDownload) {
+			document.getElementById("downloadForm").submit();
+		}
+	};
+</script>
+
+</body>
+</html>

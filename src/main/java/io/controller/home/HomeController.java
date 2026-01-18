@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class HomeController {
+	
+	/**
+	 * HTMLテンプレートパス
+	 */
+	private static final String LIST_HTML_TEMPLATE_FILE_PATH = "home/home";
 
 	/**
 	 * ホーム画面遷移
@@ -16,17 +21,7 @@ public class HomeController {
 	 */
     @GetMapping("/")
     public String home() {
-        return "home/home";
-    }
-
-    /**
-	 * CSV出力画面遷移
-	 * 
-	 * @return	HTML情報
-	 */
-    @GetMapping("/export/csv")
-    public String exportCsvPage() {
-        return "export-csv";
+        return LIST_HTML_TEMPLATE_FILE_PATH;
     }
 
     /**
