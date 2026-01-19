@@ -20,22 +20,42 @@
 			<div class="form-group">
 				<label>文字コード</label>
 				<select name="encoding">
-					<option value="UTF-8" selected>UTF-8</option>
-					<option value="SHIFT_JIS">Shift-JIS</option>
+					<option value="UTF-8" th:selected="${encoding == 'UTF-8'}" selected>UTF-8</option>
+					<option value="SHIFT_JIS" th:selected="${encoding == 'SHIFT_JIS'}">Shift-JIS</option>
 				</select>
 			</div>
 			
 			<div class="form-group">
 				<label>ダブルクォート</label>
 				<select name="quoteMode">
-					<option value="ALL" selected>すべて囲う</option>
-					<option value="NONE">囲わない</option>
+					<option value="ALL" th:selected="${quoteMode != null and quoteMode.name() == 'ALL'}">すべて囲う</option>
+					<option value="NONE" th:selected="${quoteMode != null and quoteMode.name() == 'NONE'}">囲わない</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label>出力単位</label>
+				<select name="fileMode" id="fileMode">
+					<option value="SINGLE" th:selected="${fileMode != null and fileMode.name() == 'SINGLE'}">1ファイル</option>
+					<option value="MULTI" th:selected="${fileMode != null and fileMode.name() == 'MULTI'}">複数ファイル</option>
+				</select>
+			</div>
+			
+			<div class="form-group" id="multiModeArea">
+				<label>複数時の出力方法</label>
+				<select name="multiMode">
+					<option value="ZIP" th:selected="${multiMode != null and multiMode.name() == 'ZIP'}">ZIPにまとめる</option>
+					<option value="INDIVIDUAL" th:selected="${multiMode != null and multiMode.name() == 'INDIVIDUAL'}">個別（非推奨）</option>
 				</select>
 			</div>
 
 			<button type="submit" class="btn success">
 				CSV出力
 			</button>
+			
+			<div class="note">
+				※「複数ファイル × 個別」はブラウザ仕様上推奨されません。ZIPを推奨します。
+			</div>
 		</form>
 	</section>
 
@@ -72,9 +92,23 @@
 	      method="post">
 		<input type="hidden" name="encoding" th:value="${encoding}">
 		<input type="hidden" name="quoteMode" th:value="${quoteMode}">
+		<input type="hidden" name="fileMode" th:value="${fileMode}">
+		<input type="hidden" name="multiMode" th:value="${multiMode}">
 	</form>
 </main>
 <script th:inline="javascript">
+	const fileMode = document.getElementById("fileMode");
+	const multiArea = document.getElementById("multiModeArea");
+	
+	// 複数時の出力方法の非活性制御
+	toggleMultiMode();
+	fileMode.addEventListener("change", toggleMultiMode);
+	
+	function toggleMultiMode() {
+	    multiArea.style.display =
+	        fileMode.value === "MULTI" ? "flex" : "none";
+	}
+	
 	window.onload = function () {
 		const autoDownload = /*[[${autoDownload}]]*/ false;
 		

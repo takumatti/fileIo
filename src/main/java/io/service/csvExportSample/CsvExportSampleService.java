@@ -3,12 +3,15 @@ package io.service.csvExportSample;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -83,7 +86,8 @@ public class CsvExportSampleService {
 	}
 
 	/**
-	 * CSV出力処理
+	 * CSV出力処理（単体用）
+	 * ヘッダ+明細をCSVに出力する
 	 * 
 	 * @param list			CSV出力用データリスト
 	 * @param encoding		エンコードタイプ
@@ -91,7 +95,7 @@ public class CsvExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
-	public void exportCsv(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+	public void exportSingleCsv(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType("text/csv");
@@ -101,38 +105,108 @@ public class CsvExportSampleService {
 
 		OutputStream os = response.getOutputStream();
 
-		// UTF-8 の場合のみ BOM を付与
+		// UTF-8 BOM
 		if (Const.UTF_8.equalsIgnoreCase(encoding)) {
 			os.write(0xEF);
 			os.write(0xBB);
 			os.write(0xBF);
 		}
 
-		// try-with-resourcesの終了時に"write.close()が自動で呼ばれる
-		//close()の中でflush()も必ず実行される
-		try (PrintWriter writer = new PrintWriter(
-				new OutputStreamWriter(os, encoding))) {
+		try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, encoding))) {
 
-			// ヘッダ
-			writeLine(writer, quoteMode,
-					"ID", "名前", "有効", "生年月日", "作成日時", "スコア", "備考");
-
-			// 明細
-			for (CsvSampleDto dto : list) {
-				writeLine(writer, quoteMode,
-						dto.getId(),
-						dto.getName(),
-						dto.getActive(),
-						dto.getBirthDate(),
-						dto.getUpdatedAt(),
-						dto.getScore(),
-						dto.getNote());
-			}
+			writeCsv(list, writer, quoteMode);
 		}
 	}
 
 	/**
-	 * データ書き込み処理
+	 * CSV出力処理（複数、単体）
+	 * ※1レスポンス = 1ダウンロードのため非推奨）
+	 * 
+	 * @param list			CSV出力用データリスト
+	 * @param encoding		エンコードタイプ
+	 * @param quoteMode		クォーテーションの有無
+	 * @param response		レスポンス情報
+	 */
+	public void exportMultiCsvIndividual(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+			HttpServletResponse response) {
+
+		throw new UnsupportedOperationException(
+				"HTTPレスポンスでは複数CSVの個別同時ダウンロードはできません。ZIPを使用してください。");
+	}
+
+	/**
+	 * CSV出力処理（複数、ZIP）
+	 * 
+	 * @param list			CSV出力用データリスト
+	 * @param encoding		エンコードタイプ
+	 * @param quoteMode		クォーテーションの有無
+	 * @param response		レスポンス情報
+	 * @throws Exception	例外処理
+	 */
+	public void exportMultiCsvZip(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+			HttpServletResponse response) throws Exception {
+
+		response.setContentType("application/zip");
+		response.setHeader(
+				"Content-Disposition",
+				"attachment; filename=\"sample.zip\"");
+
+		ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream());
+		Charset charset = Charset.forName(encoding);
+
+		// 例として3ファイル作成
+		for (int i = 0; i < 3; i++) {
+
+			ZipEntry entry = new ZipEntry("sample_" + i + ".csv");
+			zipOut.putNextEntry(entry);
+
+			// UTF-8 BOM（ZIP内CSV）
+			if (Const.UTF_8.equalsIgnoreCase(encoding)) {
+				zipOut.write(0xEF);
+				zipOut.write(0xBB);
+				zipOut.write(0xBF);
+			}
+
+			PrintWriter writer = new PrintWriter(new OutputStreamWriter(zipOut, charset));
+
+			// CSV書き込み
+			writeCsv(list, writer, quoteMode);
+
+			writer.flush();
+			zipOut.closeEntry();
+		}
+
+		zipOut.finish();
+		zipOut.flush();
+	}
+
+	/**
+	 * CSV書き込み処理
+	 * 
+	 * @param list			CSV出力用データリスト
+	 * @param writer		PrintWriter
+	 * @param encoding		エンコードタイプ
+	 * @throws Exception	例外処理
+	 */
+	private void writeCsv(List<CsvSampleDto> list, PrintWriter writer, QuoteMode quoteMode) throws Exception {
+
+		writeLine(writer, quoteMode,
+				"ID", "名前", "有効", "生年月日", "作成日時", "スコア", "備考");
+
+		for (CsvSampleDto dto : list) {
+			writeLine(writer, quoteMode,
+					dto.getId(),
+					dto.getName(),
+					dto.getActive(),
+					dto.getBirthDate(),
+					dto.getUpdatedAt(),
+					dto.getScore(),
+					dto.getNote());
+		}
+	}
+
+	/**
+	 * 1行データ書き込み処理
 	 * 
 	 * @param writer		PrintWriter
 	 * @param quoteMode		クォーテーションの有無
