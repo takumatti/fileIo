@@ -11,8 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import io.common.ExcelFileMode;
+import io.common.ExcelMultiOutputMode;
 import io.dto.excelSample.ExcelSampleDto;
 import io.service.excelSample.ExcelSampleService;
 
@@ -32,6 +35,16 @@ public class ExcelSampleController {
 	 * Excel用セッション
 	 */
 	private static final String SESSION_EXCEL_SAMPLE_LIST = "SESSION_EXCEL_SAMPLE_LIST";
+	
+	/**
+	 * 出力単位用セッション
+	 */
+	private static final String SESSION_FILE_MODE = "SESSION_FILE_MODE";
+
+	/**
+	 * 複数時の出力方法用のセッション
+	 */
+	private static final String SESSION_MULTI_MODE = "SESSION_MULTI_MODE";
 
 	/**
 	 *  Excel出力サンプルサービス
@@ -58,19 +71,27 @@ public class ExcelSampleController {
 	/**
 	 * 画面の値更新
 	 * 
+	 * @param fileMode		ファイル出力単位
+	 * @param multiMode		出力方法
 	 * @param session		セッション情報
 	 * @param model			リダイレクト情報
 	 * @return				HTML情報
 	 */
 	@PostMapping("/update")
-	public String update(HttpSession session, RedirectAttributes ra) {
+	public String update(@RequestParam ExcelFileMode fileMode, @RequestParam ExcelMultiOutputMode multiMode,
+			HttpSession session, RedirectAttributes ra) {
 
 		List<ExcelSampleDto> list = excelSampleService.createAndUpdate();
+		
+		session.setAttribute(SESSION_FILE_MODE, fileMode);
+		session.setAttribute(SESSION_MULTI_MODE, multiMode);
 
 		session.setAttribute(SESSION_EXCEL_SAMPLE_LIST, list);
 
 		// リロードでExcelが再DLされるのを防止
 		ra.addFlashAttribute("list", list);
+		ra.addFlashAttribute("fileMode", fileMode);
+		ra.addFlashAttribute("multiMode", multiMode);
 		ra.addFlashAttribute("autoDownload", true);
 
 		return "redirect:/excelExportSample/result";
@@ -90,8 +111,12 @@ public class ExcelSampleController {
 
 		@SuppressWarnings("unchecked")
 		List<ExcelSampleDto> list = (List<ExcelSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
+		ExcelFileMode fileMode = (ExcelFileMode) session.getAttribute(SESSION_FILE_MODE);
+		ExcelMultiOutputMode multiMode = (ExcelMultiOutputMode) session.getAttribute(SESSION_MULTI_MODE);
 
 		model.addAttribute("list", list);
+		model.addAttribute("fileMode", fileMode);
+		model.addAttribute("multiMode", multiMode);
 
 		return LIST_HTML_TEMPLATE_FILE_PATH;
 	}
@@ -99,12 +124,15 @@ public class ExcelSampleController {
 	/**
 	 * Excel出力
 	 * 
+	 * @param fileMode		ファイル出力単位
+	 * @param multiMode		出力方法
 	 * @param session		セッション情報
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
 	@PostMapping("/download")
-	public void downloadExcel(HttpSession session, HttpServletResponse response) throws Exception {
+	public void downloadExcel(@RequestParam ExcelFileMode fileMode, @RequestParam ExcelMultiOutputMode multiMode,
+			HttpSession session, HttpServletResponse response) throws Exception {
 
 		@SuppressWarnings("unchecked")
 		List<ExcelSampleDto> list = (List<ExcelSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
@@ -112,8 +140,18 @@ public class ExcelSampleController {
 		if (list == null || list.isEmpty()) {
 			throw new IllegalStateException("Excelデータが存在しません");
 		}
+		
+		if (fileMode == ExcelFileMode.SINGLE) {
+			excelSampleService.exportSingleExcel(list, response);
+			return;
+		}
 
-		excelSampleService.exportExcel(list, response);
+		// MULTI
+		if (multiMode == ExcelMultiOutputMode.MULTI_SHEET) {
+			excelSampleService.exportMultiSheetExcel(list, response);
+		} else {
+			excelSampleService.exportMultiExcelZip(list, response);
+		}
 	}
 
 }

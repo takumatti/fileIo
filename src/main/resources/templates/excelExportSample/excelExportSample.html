@@ -17,9 +17,29 @@
 	<!-- 操作エリア -->
 	<section class="search-area">
 		<form th:action="@{/excelExportSample/update}" method="post" class="search-form">
+			<div class="form-group">
+				<label>出力単位</label>
+				<select name="fileMode" id="fileMode">
+					<option value="SINGLE" th:selected="${fileMode != null and fileMode.name() == 'SINGLE'}">1ファイル</option>
+					<option value="MULTI" th:selected="${fileMode != null and fileMode.name() == 'MULTI'}">複数ファイル</option>
+				</select>
+			</div>
+				
+			<div class="form-group" id="multiModeArea">
+				<label>複数時の出力方法</label>
+				<select name="multiMode">
+					<option value="MULTI_SHEET" th:selected="${multiMode != null and multiMode.name() == 'MULTI_SHEET'}">複数シート</option>
+					<option value="ZIP" th:selected="${multiMode != null and multiMode.name() == 'ZIP'}">ZIP</option>
+				</select>
+			</div>
+				
 			<button type="submit" class="btn success">
 				excel出力
 			</button>
+			
+			<div class="note">
+				※「複数シート」は1ファイルで管理しやすくおすすめです。
+			</div>
 		</form>
 	</section>
 
@@ -54,9 +74,23 @@
 	<form id="downloadForm"
 	      th:action="@{/excelExportSample/download}"
 	      method="post">
+		  <input type="hidden" name="fileMode" th:value="${fileMode}">
+		  <input type="hidden" name="multiMode" th:value="${multiMode}">
 	</form>
 </main>
 <script th:inline="javascript">
+	const fileMode = document.getElementById("fileMode");
+	const multiArea = document.getElementById("multiModeArea");
+	
+	// 複数時の出力方法の非活性制御
+	toggleMultiMode();
+	fileMode.addEventListener("change", toggleMultiMode);
+	
+	function toggleMultiMode() {
+	    multiArea.style.display =
+	        fileMode.value === "MULTI" ? "flex" : "none";
+	}
+	
 	window.onload = function () {
 		const autoDownload = /*[[${autoDownload}]]*/ false;
 		
