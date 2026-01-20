@@ -24,7 +24,7 @@ import io.dto.excelSample.ExcelSampleDto;
  * Excel出力サンプルサービス
  */
 @Service
-public class ExcelSampleService {
+public class ExcelExportSampleService {
 
 	/**
 	 * ダミーデータ生成

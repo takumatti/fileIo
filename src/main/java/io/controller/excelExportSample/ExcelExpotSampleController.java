@@ -17,14 +17,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.common.ExcelFileMode;
 import io.common.ExcelMultiOutputMode;
 import io.dto.excelSample.ExcelSampleDto;
-import io.service.excelExportSample.ExcelSampleService;
+import io.service.excelExportSample.ExcelExportSampleService;
 
 /**
  * Excel出力サンプルコントローラー
  */
 @Controller
 @RequestMapping("/excelExportSample")
-public class ExcelSampleController {
+public class ExcelExpotSampleController {
 
 	/**
 	 * HTMLテンプレートパス
@@ -50,7 +50,7 @@ public class ExcelSampleController {
 	 *  Excel出力サンプルサービス
 	 */
 	@Autowired
-	private ExcelSampleService excelSampleService;
+	private ExcelExportSampleService excelExportSampleService;
 
 	/**
 	 * 初期表示
@@ -61,7 +61,7 @@ public class ExcelSampleController {
 	@GetMapping()
 	public String view(Model model) {
 
-		List<ExcelSampleDto> list = excelSampleService.createDummyList();
+		List<ExcelSampleDto> list = excelExportSampleService.createDummyList();
 		model.addAttribute("list", list);
 		model.addAttribute("autoDownload", false);
 
@@ -81,7 +81,7 @@ public class ExcelSampleController {
 	public String update(@RequestParam ExcelFileMode fileMode, @RequestParam ExcelMultiOutputMode multiMode,
 			HttpSession session, RedirectAttributes ra) {
 
-		List<ExcelSampleDto> list = excelSampleService.createAndUpdate();
+		List<ExcelSampleDto> list = excelExportSampleService.createAndUpdate();
 		
 		session.setAttribute(SESSION_FILE_MODE, fileMode);
 		session.setAttribute(SESSION_MULTI_MODE, multiMode);
@@ -142,15 +142,15 @@ public class ExcelSampleController {
 		}
 		
 		if (fileMode == ExcelFileMode.SINGLE) {
-			excelSampleService.exportSingleExcel(list, response);
+			excelExportSampleService.exportSingleExcel(list, response);
 			return;
 		}
 
 		// MULTI
 		if (multiMode == ExcelMultiOutputMode.MULTI_SHEET) {
-			excelSampleService.exportMultiSheetExcel(list, response);
+			excelExportSampleService.exportMultiSheetExcel(list, response);
 		} else {
-			excelSampleService.exportMultiExcelZip(list, response);
+			excelExportSampleService.exportMultiExcelZip(list, response);
 		}
 	}
 
