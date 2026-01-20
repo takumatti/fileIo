@@ -17,14 +17,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.common.ExcelFileMode;
 import io.common.ExcelMultiOutputMode;
 import io.dto.excelSample.ExcelSampleDto;
-import io.service.excelExportSample.ExcelSampleService;
+import io.service.excelExportSample.ExcelExportSampleService;
 
 /**
  * Excel出力サンプルコントローラー
  */
 @Controller
 @RequestMapping("/excelExportSample")
-public class ExcelSampleController {
+public class ExcelExpotSampleController {
 
 	/**
 	 * HTMLテンプレートパス
@@ -50,7 +50,7 @@ public class ExcelSampleController {
 	 *  Excel出力サンプルサービス
 	 */
 	@Autowired
-	private ExcelSampleService excelSampleService;
+	private ExcelExportSampleService excelSampleService;
 
 	/**
 	 * 初期表示
