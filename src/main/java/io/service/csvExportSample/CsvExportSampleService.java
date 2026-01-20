@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import io.common.Const;
 import io.common.QuoteMode;
-import io.dto.csvExportSample.CsvSampleDto;
+import io.dto.csvExportSample.CsvExportSampleDto;
 
 /**
  * CSV出力サンプルサービス
@@ -32,11 +32,11 @@ public class CsvExportSampleService {
 	 * 
 	 * @return ダミーデータ情報リスト
 	 */
-	public List<CsvSampleDto> createDummyList() {
+	public List<CsvExportSampleDto> createDummyList() {
 
-		List<CsvSampleDto> list = new ArrayList<>();
+		List<CsvExportSampleDto> list = new ArrayList<>();
 
-		CsvSampleDto dto1 = new CsvSampleDto();
+		CsvExportSampleDto dto1 = new CsvExportSampleDto();
 		dto1.setId(1);
 		dto1.setName("山田太郎");
 		dto1.setActive(true);
@@ -45,7 +45,7 @@ public class CsvExportSampleService {
 		dto1.setScore(98.5);
 		dto1.setNote(null);
 
-		CsvSampleDto dto2 = new CsvSampleDto();
+		CsvExportSampleDto dto2 = new CsvExportSampleDto();
 		dto2.setId(2);
 		dto2.setName("Suzuki Hanako");
 		dto2.setActive(false);
@@ -54,7 +54,7 @@ public class CsvExportSampleService {
 		dto2.setScore(75.0);
 		dto2.setNote("備考あり");
 
-		CsvSampleDto dto3 = new CsvSampleDto();
+		CsvExportSampleDto dto3 = new CsvExportSampleDto();
 		dto3.setId(3);
 		dto3.setName("てすと,たろう");
 		dto3.setActive(false);
@@ -75,9 +75,9 @@ public class CsvExportSampleService {
 	 * 
 	 * @param	ダミーデータ情報
 	 */
-	public List<CsvSampleDto> createAndUpdate() {
+	public List<CsvExportSampleDto> createAndUpdate() {
 
-		List<CsvSampleDto> list = createDummyList();
+		List<CsvExportSampleDto> list = createDummyList();
 		LocalDateTime now = LocalDateTime.now();
 
 		list.forEach(dto -> dto.setUpdatedAt(now));
@@ -95,7 +95,7 @@ public class CsvExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
-	public void exportSingleCsv(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+	public void exportSingleCsv(List<CsvExportSampleDto> list, String encoding, QuoteMode quoteMode,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType("text/csv");
@@ -127,7 +127,7 @@ public class CsvExportSampleService {
 	 * @param quoteMode		クォーテーションの有無
 	 * @param response		レスポンス情報
 	 */
-	public void exportMultiCsvIndividual(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+	public void exportMultiCsvIndividual(List<CsvExportSampleDto> list, String encoding, QuoteMode quoteMode,
 			HttpServletResponse response) {
 
 		throw new UnsupportedOperationException(
@@ -143,7 +143,7 @@ public class CsvExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外処理
 	 */
-	public void exportMultiCsvZip(List<CsvSampleDto> list, String encoding, QuoteMode quoteMode,
+	public void exportMultiCsvZip(List<CsvExportSampleDto> list, String encoding, QuoteMode quoteMode,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType("application/zip");
@@ -188,12 +188,12 @@ public class CsvExportSampleService {
 	 * @param encoding		エンコードタイプ
 	 * @throws Exception	例外処理
 	 */
-	private void writeCsv(List<CsvSampleDto> list, PrintWriter writer, QuoteMode quoteMode) throws Exception {
+	private void writeCsv(List<CsvExportSampleDto> list, PrintWriter writer, QuoteMode quoteMode) throws Exception {
 
 		writeLine(writer, quoteMode,
 				"ID", "名前", "有効", "生年月日", "作成日時", "スコア", "備考");
 
-		for (CsvSampleDto dto : list) {
+		for (CsvExportSampleDto dto : list) {
 			writeLine(writer, quoteMode,
 					dto.getId(),
 					dto.getName(),

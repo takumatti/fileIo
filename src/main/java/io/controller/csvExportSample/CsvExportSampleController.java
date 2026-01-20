@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.common.CsvFileMode;
 import io.common.CsvMultiOutputMode;
 import io.common.QuoteMode;
-import io.dto.csvExportSample.CsvSampleDto;
+import io.dto.csvExportSample.CsvExportSampleDto;
 import io.service.csvExportSample.CsvExportSampleService;
 
 /**
@@ -72,7 +72,7 @@ public class CsvExportSampleController {
 	@GetMapping()
 	public String view(Model model) {
 
-		List<CsvSampleDto> list = csvSampleService.createDummyList();
+		List<CsvExportSampleDto> list = csvSampleService.createDummyList();
 		model.addAttribute("list", list);
 		model.addAttribute("encoding", "UTF-8");
 	    model.addAttribute("quoteMode", QuoteMode.ALL);
@@ -99,7 +99,7 @@ public class CsvExportSampleController {
 			@RequestParam CsvFileMode fileMode, @RequestParam(required = false) CsvMultiOutputMode multiMode,
 			HttpSession session, RedirectAttributes ra) {
 
-		List<CsvSampleDto> list = csvSampleService.createAndUpdate();
+		List<CsvExportSampleDto> list = csvSampleService.createAndUpdate();
 
 		session.setAttribute(SESSION_CSV_SAMPLE_LIST, list);
 		session.setAttribute(SESSION_ENCODING, encoding);
@@ -129,7 +129,7 @@ public class CsvExportSampleController {
 	public String result(HttpSession session, Model model) {
 
 		@SuppressWarnings("unchecked")
-		List<CsvSampleDto> list = (List<CsvSampleDto>) session.getAttribute(SESSION_CSV_SAMPLE_LIST);
+		List<CsvExportSampleDto> list = (List<CsvExportSampleDto>) session.getAttribute(SESSION_CSV_SAMPLE_LIST);
 		String encoding = (String) session.getAttribute(SESSION_ENCODING);
 		QuoteMode quoteMode = (QuoteMode) session.getAttribute(SESSION_QUOTE_MODE);
 		CsvFileMode fileMode = (CsvFileMode) session.getAttribute(SESSION_FILE_MODE);
@@ -162,7 +162,7 @@ public class CsvExportSampleController {
 			HttpSession session, HttpServletResponse response) throws Exception {
 
 		@SuppressWarnings("unchecked")
-		List<CsvSampleDto> list = (List<CsvSampleDto>) session.getAttribute(SESSION_CSV_SAMPLE_LIST);
+		List<CsvExportSampleDto> list = (List<CsvExportSampleDto>) session.getAttribute(SESSION_CSV_SAMPLE_LIST);
 
 		if (list == null || list.isEmpty()) {
 			throw new IllegalStateException("CSVデータが存在しません");

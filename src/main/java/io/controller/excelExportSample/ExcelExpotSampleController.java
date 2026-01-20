@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.common.ExcelFileMode;
 import io.common.ExcelMultiOutputMode;
-import io.dto.excelSample.ExcelSampleDto;
+import io.dto.excelExportSample.ExcelExportSampleDto;
 import io.service.excelExportSample.ExcelExportSampleService;
 
 /**
@@ -61,7 +61,7 @@ public class ExcelExpotSampleController {
 	@GetMapping()
 	public String view(Model model) {
 
-		List<ExcelSampleDto> list = excelExportSampleService.createDummyList();
+		List<ExcelExportSampleDto> list = excelExportSampleService.createDummyList();
 		model.addAttribute("list", list);
 		model.addAttribute("autoDownload", false);
 
@@ -81,7 +81,7 @@ public class ExcelExpotSampleController {
 	public String update(@RequestParam ExcelFileMode fileMode, @RequestParam ExcelMultiOutputMode multiMode,
 			HttpSession session, RedirectAttributes ra) {
 
-		List<ExcelSampleDto> list = excelExportSampleService.createAndUpdate();
+		List<ExcelExportSampleDto> list = excelExportSampleService.createAndUpdate();
 		
 		session.setAttribute(SESSION_FILE_MODE, fileMode);
 		session.setAttribute(SESSION_MULTI_MODE, multiMode);
@@ -110,7 +110,7 @@ public class ExcelExpotSampleController {
 			Model model) {
 
 		@SuppressWarnings("unchecked")
-		List<ExcelSampleDto> list = (List<ExcelSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
+		List<ExcelExportSampleDto> list = (List<ExcelExportSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
 		ExcelFileMode fileMode = (ExcelFileMode) session.getAttribute(SESSION_FILE_MODE);
 		ExcelMultiOutputMode multiMode = (ExcelMultiOutputMode) session.getAttribute(SESSION_MULTI_MODE);
 
@@ -135,7 +135,7 @@ public class ExcelExpotSampleController {
 			HttpSession session, HttpServletResponse response) throws Exception {
 
 		@SuppressWarnings("unchecked")
-		List<ExcelSampleDto> list = (List<ExcelSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
+		List<ExcelExportSampleDto> list = (List<ExcelExportSampleDto>) session.getAttribute(SESSION_EXCEL_SAMPLE_LIST);
 
 		if (list == null || list.isEmpty()) {
 			throw new IllegalStateException("Excelデータが存在しません");

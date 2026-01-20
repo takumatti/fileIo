@@ -18,7 +18,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import io.common.Const;
-import io.dto.excelSample.ExcelSampleDto;
+import io.dto.excelExportSample.ExcelExportSampleDto;
 
 /**
  * Excel出力サンプルサービス
@@ -31,11 +31,11 @@ public class ExcelExportSampleService {
 	 * 
 	 * @return ダミーデータ情報リスト
 	 */
-	public List<ExcelSampleDto> createDummyList() {
+	public List<ExcelExportSampleDto> createDummyList() {
 
-		List<ExcelSampleDto> list = new ArrayList<>();
+		List<ExcelExportSampleDto> list = new ArrayList<>();
 
-		ExcelSampleDto dto1 = new ExcelSampleDto();
+		ExcelExportSampleDto dto1 = new ExcelExportSampleDto();
 		dto1.setId(1);
 		dto1.setName("山田太郎");
 		dto1.setActive(true);
@@ -44,7 +44,7 @@ public class ExcelExportSampleService {
 		dto1.setScore(98.5);
 		dto1.setNote(null);
 
-		ExcelSampleDto dto2 = new ExcelSampleDto();
+		ExcelExportSampleDto dto2 = new ExcelExportSampleDto();
 		dto2.setId(2);
 		dto2.setName("Suzuki Hanako");
 		dto2.setActive(false);
@@ -53,7 +53,7 @@ public class ExcelExportSampleService {
 		dto2.setScore(75.0);
 		dto2.setNote("備考あり");
 
-		ExcelSampleDto dto3 = new ExcelSampleDto();
+		ExcelExportSampleDto dto3 = new ExcelExportSampleDto();
 		dto3.setId(3);
 		dto3.setName("てすと,たろう");
 		dto3.setActive(false);
@@ -74,9 +74,9 @@ public class ExcelExportSampleService {
 	 * 
 	 * @param	ダミーデータ情報
 	 */
-	public List<ExcelSampleDto> createAndUpdate() {
+	public List<ExcelExportSampleDto> createAndUpdate() {
 
-		List<ExcelSampleDto> list = createDummyList();
+		List<ExcelExportSampleDto> list = createDummyList();
 		LocalDateTime now = LocalDateTime.now();
 
 		list.forEach(dto -> dto.setUpdatedAt(now));
@@ -91,7 +91,7 @@ public class ExcelExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
-	public void exportSingleExcel(List<ExcelSampleDto> list,
+	public void exportSingleExcel(List<ExcelExportSampleDto> list,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType(
@@ -115,7 +115,7 @@ public class ExcelExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
-	public void exportMultiSheetExcel(List<ExcelSampleDto> list,
+	public void exportMultiSheetExcel(List<ExcelExportSampleDto> list,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType(
@@ -142,7 +142,7 @@ public class ExcelExportSampleService {
 	 * @param response		レスポンス情報
 	 * @throws Exception	例外情報
 	 */
-	public void exportMultiExcelZip(List<ExcelSampleDto> list,
+	public void exportMultiExcelZip(List<ExcelExportSampleDto> list,
 			HttpServletResponse response) throws Exception {
 
 		response.setContentType("application/zip");
@@ -179,7 +179,7 @@ public class ExcelExportSampleService {
 	 * @param list			Excel出力用データリスト
 	 */
 	private void createSheet(Workbook workbook, String sheetName,
-			List<ExcelSampleDto> list) {
+			List<ExcelExportSampleDto> list) {
 
 		Sheet sheet = workbook.createSheet(sheetName);
 		int rowIndex = 0;
@@ -195,7 +195,7 @@ public class ExcelExportSampleService {
 		createCell(header, 6, "備考");
 
 		// 明細
-		for (ExcelSampleDto dto : list) {
+		for (ExcelExportSampleDto dto : list) {
 			Row row = sheet.createRow(rowIndex++);
 			createCell(row, 0, dto.getId());
 			createCell(row, 1, dto.getName());

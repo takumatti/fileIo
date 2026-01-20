@@ -9,7 +9,7 @@ import lombok.Data;
  * CSV出力用のサンプルデータ格納DTO
  */
 @Data
-public class CsvSampleDto {
+public class CsvExportSampleDto {
 	/** 数字 */
 	private Integer id;
 	/** 文字 */

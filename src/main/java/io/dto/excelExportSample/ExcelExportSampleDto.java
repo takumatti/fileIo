@@ -1,4 +1,4 @@
-package io.dto.excelSample;
+package io.dto.excelExportSample;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import lombok.Data;
  * Excel出力用のサンプルデータ格納DTO
  */
 @Data
-public class ExcelSampleDto {
+public class ExcelExportSampleDto {
 	/** 数字 */
 	private Integer id;
 	/** 文字 */
