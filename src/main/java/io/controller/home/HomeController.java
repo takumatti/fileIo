@@ -33,14 +33,4 @@ public class HomeController {
     public String importCsvPage() {
         return "import-csv";
     }
-
-    /**
-	 * Excel取込画面遷移
-	 * 
-	 * @return	HTML情報
-	 */
-    @GetMapping("/import/excel")
-    public String importExcelPage() {
-        return "import-excel";
-    }
 }

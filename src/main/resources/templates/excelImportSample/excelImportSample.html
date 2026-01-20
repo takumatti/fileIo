@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - Excel取込サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/excelImportSample/excelImportSample.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>Excel取込サンプル</h1>
+	<p>セル型に依存しない取込テンプレート</p>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/excelImportSample/upload}" method="post" enctype="multipart/form-data" class="search-form">
+
+			<div class="form-group">
+				<label>取込ファイル</label>
+
+				<div class="file-select-area">
+					<input type="text" id="excelFileName" readonly placeholder="Excelファイル（.xlsx）を選択してください"/>
+					<input type="file" id="excelFile" name="excelFile" accept=".xlsx" style="display:none"/>
+					<button type="button" class="btn primary" onclick="openFileDialog()">
+						ファイル選択
+					</button>
+				</div>
+			</div>
+
+			<button type="submit" class="btn success">
+				取込実行
+			</button>
+
+			<div class="note">
+				※ .xlsx形式のみ対応しています。
+			</div>
+		</form>
+	</section>
+
+	<!-- メッセージ表示 -->
+	<section class="result-area" th:if="${message != null}">
+		<p th:text="${message}"></p>
+		<table>
+				<tbody>
+					<tr th:each="row : ${excelList}">
+						<td th:each="val : ${row.values}"
+						    th:text="${val}">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	</section>
+
+</main>
+
+<script>
+function openFileDialog() {
+	document.getElementById("excelFile").click();
+}
+
+document.getElementById("excelFile").addEventListener("change", function () {
+	if (this.files.length === 0) {
+		return;
+	}
+
+	const file = this.files[0];
+	const fileName = file.name.toLowerCase();
+
+	// 拡張子チェック
+	if (!fileName.endsWith(".xlsx")) {
+		alert("Excelファイル（.xlsx）のみ選択可能です。");
+		// 選択をリセット
+		this.value = "";
+		document.getElementById("excelFileName").value = "";
+		return;
+	}
+
+	// OKの場合：ファイル名のみ表示
+	document.getElementById("excelFileName").value = file.name;
+});
+</script>
+
+</body>
+</html>
