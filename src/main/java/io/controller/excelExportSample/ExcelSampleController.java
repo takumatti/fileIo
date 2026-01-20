@@ -1,4 +1,4 @@
-package io.controller.excelSample;
+package io.controller.excelExportSample;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import io.common.ExcelFileMode;
 import io.common.ExcelMultiOutputMode;
 import io.dto.excelSample.ExcelSampleDto;
-import io.service.excelSample.ExcelSampleService;
+import io.service.excelExportSample.ExcelSampleService;
 
 /**
  * Excel出力サンプルコントローラー
