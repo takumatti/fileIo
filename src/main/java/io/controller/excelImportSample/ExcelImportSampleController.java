@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.dto.excelImportSample.ExcelImportForm;
 import io.dto.excelImportSample.ExcelRowDto;
 import io.service.excelImportSample.ExcelImportSampleService;
 
@@ -39,34 +40,38 @@ public class ExcelImportSampleController {
 	 * @return	HTML情報
 	 */
     @GetMapping()
-    public String view() {
+    public String view(Model model) {
+    	model.addAttribute("excelImportForm", new ExcelImportForm());
         return LIST_HTML_TEMPLATE_FILE_PATH;
     }
 
     /**
      * Excelファイル取込処理
      * 
-     * @param excelFile		取込ファイル
-     * @param model			モデル情報
-     * @return				HTML情報
+     * @param form		フォーム情報
+     * @param model		モデル情報
+     * @return			HTML情報
      */
     @PostMapping("/upload")
-    public String upload(@RequestParam("excelFile") MultipartFile excelFile, Model model) {
+    public String upload( @ModelAttribute ExcelImportForm form, Model model) {
+    	
+    	MultipartFile file = form.getExcelFile();
+    	
         // ファイル未選択
-        if (excelFile == null || excelFile.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             model.addAttribute("message", "Excelファイルを選択してください。");
             return LIST_HTML_TEMPLATE_FILE_PATH;
         }
 
         // 拡張子チェック
-        String fileName = excelFile.getOriginalFilename();
+        String fileName = file.getOriginalFilename();
         if (fileName == null || !fileName.endsWith(".xlsx")) {
             model.addAttribute("message", ".xlsx形式のExcelのみ対応しています。");
             return "excelImport";
         }
 
         try {
-        	List<ExcelRowDto> list = excelImportSampleService.importExcel(excelFile);
+        	List<ExcelRowDto> list = excelImportSampleService.importExcel(file);
         	model.addAttribute("excelList", list);
             model.addAttribute("message", "Excel取込が完了しました。");
         } catch (Exception e) {

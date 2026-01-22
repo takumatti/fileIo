@@ -16,14 +16,14 @@
 
 	<!-- 操作エリア -->
 	<section class="search-area">
-		<form th:action="@{/excelImportSample/upload}" method="post" enctype="multipart/form-data" class="search-form">
+		<form th:action="@{/excelImportSample/upload}" th:object="${excelImportForm}" method="post" enctype="multipart/form-data" class="search-form">
 
 			<div class="form-group">
 				<label>取込ファイル</label>
 
 				<div class="file-select-area">
 					<input type="text" id="excelFileName" readonly placeholder="Excelファイル（.xlsx）を選択してください"/>
-					<input type="file" id="excelFile" name="excelFile" accept=".xlsx" style="display:none"/>
+					<input type="file" th:field="*{excelFile}" accept=".xlsx" style="display:none"/>
 					<button type="button" class="btn primary" onclick="openFileDialog()">
 						ファイル選択
 					</button>

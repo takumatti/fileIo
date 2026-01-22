@@ -12,9 +12,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,23 +38,27 @@ public class ExcelImportSampleService {
 
 		List<ExcelRowDto> result = new ArrayList<>();
 
-		try (InputStream is = excelFile.getInputStream();
-				Workbook workbook = new XSSFWorkbook(is)) {
+		try (InputStream stream = excelFile.getInputStream();
+				XSSFWorkbook workbook = (XSSFWorkbook) WorkbookFactory.create(stream)) {
 
 			// 1シート目
-			Sheet sheet = workbook.getSheetAt(0);
+			XSSFSheet sheet = workbook.getSheetAt(0);
 
 			for (int rowIndex = 0; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-				Row row = sheet.getRow(rowIndex);
+				// 1行データの取得
+				XSSFRow row = sheet.getRow(rowIndex);
+				
+				// 見た目は空行でも行番号のみ飛ぶこともあることを考慮
 				if (row == null) {
 					continue;
 				}
 
 				List<String> rowValues = new ArrayList<>();
 
-				for (int col = 0; col < row.getLastCellNum(); col++) {
-					Cell cell = row.getCell(col);
-					rowValues.add(getCellValueAsString(cell));
+				for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
+					XSSFCell cell = row.getCell(colIndex);
+					String colItem = getCellValueAsString(cell);
+					rowValues.add(colItem);
 				}
 
 				result.add(new ExcelRowDto(rowValues));
@@ -64,12 +69,12 @@ public class ExcelImportSampleService {
 	}
 
 	/**
-	 * 取り込んだセルの値を文字列に変換
+	 * Excelファイル取込値取得 数値・日付・文字列・指数表記を含め、Excel上の見た目通りに返却する
 	 * 
 	 * @param cell	セルの値
 	 * @return		変換した文字列
 	 */
-	private String getCellValueAsString(Cell cell) {
+	private String getCellValueAsString(XSSFCell cell) {
 
 		if (cell == null) {
 			return null;
