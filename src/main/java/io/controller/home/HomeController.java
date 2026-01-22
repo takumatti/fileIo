@@ -23,14 +23,4 @@ public class HomeController {
     public String home() {
         return LIST_HTML_TEMPLATE_FILE_PATH;
     }
-
-    /**
-	 * CSV取込画面遷移
-	 * 
-	 * @return	HTML情報
-	 */
-    @GetMapping("/import/csv")
-    public String importCsvPage() {
-        return "import-csv";
-    }
 }

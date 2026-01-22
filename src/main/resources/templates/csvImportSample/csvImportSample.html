@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - CSV取込サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/csvImportSample/csvImportSample.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>CSV取込サンプル</h1>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/csvImportSample/upload}" th:object="${csvImportForm}" method="post" enctype="multipart/form-data" class="search-form">
+
+			<div class="form-group">
+				<label>取込ファイル</label>
+
+				<div class="file-select-area">
+					<input type="text" id="csvFileName" readonly placeholder="CSVファイルを選択してください"/>
+					<input type="file" th:field="*{csvFile}" accept=".csv" style="display:none"/>
+					<button type="button" class="btn primary" onclick="openFileDialog()">
+						ファイル選択
+					</button>
+				</div>
+			</div>
+
+			<button type="submit" class="btn success">
+				取込実行
+			</button>
+		</form>
+	</section>
+
+	<!-- メッセージ表示 -->
+	<section class="result-area" th:if="${message != null}">
+		<p th:text="${message}"></p>
+		<table>
+				<tbody>
+					<tr th:each="row : ${csvList}">
+						<td th:each="val : ${row.values}"
+						    th:text="${val}">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	</section>
+
+</main>
+
+<script>
+function openFileDialog() {
+	document.getElementById("csvFile").click();
+}
+
+document.getElementById("csvFile").addEventListener("change", function () {
+	if (this.files.length === 0) {
+		return;
+	}
+
+	const file = this.files[0];
+	const fileName = file.name.toLowerCase();
+
+	// 拡張子チェック
+	if (!fileName.endsWith(".csv")) {
+		alert("CSVファイルのみ選択可能です。");
+		// 選択をリセット
+		this.value = "";
+		document.getElementById("csvFileName").value = "";
+		return;
+	}
+
+	// OKの場合：ファイル名のみ表示
+	document.getElementById("csvFileName").value = file.name;
+});
+</script>
+
+</body>
+</html>
