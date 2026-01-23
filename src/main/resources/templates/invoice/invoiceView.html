@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>請求書PDF出力</title>
+<link rel="stylesheet" th:href="@{/css/invoice/invoice.css}">
+</head>
+<body>
+
+<header class="header">
+    <h1>請求書PDF出力サンプル</h1>
+</header>
+
+<main class="container">
+
+    <table>
+        <tr><th>請求番号</th><td th:text="${invoice.no}"></td></tr>
+        <tr><th>請求日</th><td th:text="${invoice.issueDate}"></td></tr>
+        <tr><th>宛先</th><td th:text="${invoice.customerName}"></td></tr>
+    </table>
+
+    <form th:action="@{/invoice/output}" method="post">
+        <button class="btn success">PDF出力</button>
+    </form>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/>
+
+<style>
+@page {
+    size: A4;
+    margin: 25mm 15mm;
+
+    @top-center {
+        content: element(page-header);
+    }
+    @bottom-center {
+        content: element(page-footer);
+    }
+}
+
+body {
+    font-family: IPAexGothic;
+    font-size: 11pt;
+}
+
+/* ヘッダー */
+header {
+    position: running(page-header);
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+}
+
+/* フッター */
+footer {
+    position: running(page-footer);
+    border-top: 1px solid #333;
+    text-align: right;
+    font-size: 9pt;
+}
+
+/* テーブル */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th, td {
+    border: 1px solid #666;
+    padding: 6px;
+}
+th {
+    background: #f0f0f0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>請求書</h2>
+    <div>請求番号：<span th:text="${invoice.no}"></span></div>
+</header>
+
+<footer>
+    <span th:text="${invoice.companyName}"></span>
+</footer>
+
+<p>
+    請求日：<span th:text="${invoice.issueDate}"></span><br/>
+    宛先：<span th:text="${invoice.customerName}"></span> 御中
+</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>品目</th>
+        <th>数量</th>
+        <th>単価</th>
+        <th>金額</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${invoice.items}">
+        <td th:text="${item.name}"></td>
+        <td th:text="${item.qty}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.total}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<p style="text-align:right">
+    合計金額：<strong th:text="${invoice.grandTotal}"></strong> 円
+</p>
+
+</body>
+</html>
