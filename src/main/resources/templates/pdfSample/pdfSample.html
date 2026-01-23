@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>PDF</title>
+    <style>
+        body { 
+			font-family: IPAexGothic;
+			font-size: 12px;
+		}
+        table {
+			width: 100%; border-collapse: collapse;
+		}
+        th, td {
+			border: 1px solid #000;
+			padding: 6px;
+		}
+        th {
+			background: #eee;
+		}
+    </style>
+</head>
+<body>
+
+<h1>PDF出力サンプル</h1>
+
+<table>
+    <tr><th>ID</th><td th:text="${data.id}"></td></tr>
+    <tr><th>名前</th><td th:text="${data.name}"></td></tr>
+    <tr><th>ステータス</th><td th:text="${data.status}"></td></tr>
+    <tr><th>作成日</th><td th:text="${data.createdDate}"></td></tr>
+</table>
+
+</body>
+</html>

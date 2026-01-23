@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>PDF出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/pdfSample/pdfSample.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>PDF出力サンプル</h1>
+	<p>固定データをPDFに変換</p>
+</header>
+
+<main class="container">
+
+	<section class="result-area" id="pdfArea">
+		<table>
+			<tr>
+				<th>ID</th>
+				<td th:text="${data.id}"></td>
+			</tr>
+			<tr>
+				<th>名前</th>
+				<td th:text="${data.name}"></td>
+			</tr>
+			<tr>
+				<th>ステータス</th>
+				<td th:text="${data.status}"></td>
+			</tr>
+			<tr>
+				<th>作成日</th>
+				<td th:text="${data.createdDate}"></td>
+			</tr>
+		</table>
+	</section>
+
+	<form th:action="@{/pdfSample/output}" method="post">
+		<button type="submit" class="btn success">
+			PDF出力
+		</button>
+	</form>
+
+</main>
+
+</body>
+</html>
