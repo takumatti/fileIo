@@ -1,0 +1,193 @@
+/** ボディ */
+body {
+    font-family: "IPAexGothic", Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+}
+
+/** ヘッダ */
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.header h1 {
+	margin: 0;
+}
+
+.header p {
+	margin: 5px 0 0;
+	font-size: 14px;
+	color: #ddd;
+}
+
+/** メインコンテナ */
+.container {
+    padding: 20px;
+}
+
+/** 操作エリア */
+.search-area {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 13px;
+    margin-bottom: 4px;
+	color: #555;
+}
+
+select {
+    padding: 6px;
+    min-width: 200px;
+}
+
+/** ボタン */
+.btn {
+    padding: 8px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn.primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn.primary:hover {
+	background: #2980b9;
+}
+
+.btn.success {
+	background: #2ecc71;
+	color: white;
+}
+
+.btn.success:hover {
+	background: #27ae60;
+}
+
+.btn.default {
+    background: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn.default:hover {
+    background: #2980b9;
+}
+
+/** 結果エリア */
+.result-area {
+    background: white;
+    padding: 16px;
+    border-radius: 6px;
+}
+
+.result-area-pdf {
+	background: white;
+	padding: 16px;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	width: 500px;
+}
+
+/** テーブル */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+	text-align: left;
+	white-space: nowrap;
+    font-size: 14px;
+}
+
+th {
+	background: #f0f0f0;
+	font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+	background: #fafafa;
+}
+
+/* データベーステーブルのスタイル */
+.db-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.db-table th, .db-table td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.db-table th div {
+    margin-bottom: 2px;
+    font-size: 0.85em;
+    color: #333;
+}
+
+.db-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* テーブルの交互行の背景色 */
+.no-data {
+    text-align: center;
+    color: #777;
+    padding: 20px;
+}
+
+/* 結果エリアのテーブル */
+.result-area table {
+	width: 100%;
+	border-collapse: collapse;
+	background: white;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+/* ノート */
+.note {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.note.success {
+  color: #155724;
+  background: #d4edda;
+}
+
+.note.error {
+  color: #721c24;
+  background: #f8d7da;
+}
+

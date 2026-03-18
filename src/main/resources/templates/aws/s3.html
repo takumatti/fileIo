@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - CSV S3出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>CSV S3出力サンプル</h1>
+	<p>画面表示データをCSVにしてS3へ保存</p>
+</header>
+
+<main class="container">
+	
+	<input type="hidden" id="fileName" th:value="${fileName}">
+	
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form onsubmit="return false;" class="search-form">
+			<div>
+				<label>
+					<input type="radio" name="csvOutputType" value="local" checked>
+					ローカルに出力
+				</label>
+				<label>
+					<input type="radio" name="csvOutputType" value="s3">
+					S3に出力
+				</label>
+			</div>
+			
+			<div style="margin-top:10px;">
+				<label>
+					<input type="radio" name="messageMode" value="alert">
+					アラート表示
+				</label>
+				<label>
+					<input type="radio" name="messageMode" value="inline" checked>
+					画面表示
+				</label>
+			</div>
+			
+			<button type="button" class="btn success" onclick="exportCsv()">
+				CSV生成
+			</button>
+			
+			<a href="/home" class="btn default">戻る</a>
+		</form>
+	</section>
+	
+	<!-- メッセージ表示エリア -->
+	<section class="result-area">
+		<div id="messageArea" class="note" style="display:none;"></div>
+	</section>
+	
+	<!-- 一覧 -->
+	<section class="result-area">
+		<h2>CSV出力対象データ</h2>
+		
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名前</th>
+					<th>有効</th>
+					<th>生年月日</th>
+					<th>作成日時</th>
+					<th>スコア</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${list}">
+					<td th:text="${row.id}"></td>
+					<td th:text="${row.name}"></td>
+					<td th:text="${row.active}"></td>
+					<td th:text="${row.birthDate}"></td>
+					<td th:text="${#temporals.format(row.updatedAt, 'yyyy/MM/dd HH:mm:ss')}"></td>
+					<td th:text="${row.score}"></td>
+					<td th:text="${row.note}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+
+</main>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+	// メッセージ表示モード取得
+	function getMessageMode() {
+		return document.querySelector('input[name="messageMode"]:checked').value;
+	}
+	
+	// メッセージ表示
+	function showMessage(message, type) {
+		var mode = getMessageMode();
+		
+		if (mode === "alert") {
+			alert(message);
+			return;
+		}
+		
+		var area = document.getElementById("messageArea");
+		area.textContent = message;
+		area.className = "note " + type;
+		area.style.display = "block";
+	}
+	
+	// CSV出力
+	function exportCsv() {
+		var outputType = document.querySelector('input[name="csvOutputType"]:checked').value;
+		
+		var req = new XMLHttpRequest();
+		req.open("POST", "s3/export", true);
+		req.responseType = "blob";
+		req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		
+		req.onload = function () {
+			// 成功
+			if (req.status >= 200 && req.status < 300) {
+				// S3出力時はダウンロードしない
+				if (outputType === "s3") {
+					showMessage("S3へCSVを出力しました", "success");
+					return;
+				}
+				
+				// ローカル出力
+				var disposition = req.getResponseHeader("Content-Disposition");
+				
+				// レスポンスヘッダから filename を取得
+				var fileName = "download.csv";
+				if (disposition && disposition.indexOf("filename=") !== -1) {
+					fileName = disposition
+					.split("filename=")[1]
+					.replace(/"/g, "");
+				}
+				
+				var blob = req.response;
+				
+				var a = document.createElement("a");
+				var url = window.URL.createObjectURL(blob);
+				a.href = url;
+				a.download = fileName;
+				a.click();
+				window.URL.revokeObjectURL(url);
+				
+				showMessage("CSVをダウンロードしました", "success");
+			} else {
+				// 失敗
+				var reader = new FileReader();
+				
+				reader.onload = function () {
+					try {
+						var json = JSON.parse(reader.result);
+						showMessage(json.message || "CSV出力に失敗しました", "error");
+					} catch (e) {
+						showMessage("CSV出力に失敗しました", "error");
+					}
+				};
+				
+				// blob → text
+				reader.readAsText(req.response);
+			}
+ 
+		};
+		
+		req.send("csvOutputType=" + encodeURIComponent(outputType));
+
+	}
+/*]]>*/
+</script>
+
+</body>
+</html>

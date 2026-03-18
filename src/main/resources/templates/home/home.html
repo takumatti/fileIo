@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - ホーム画面</title>
+	<link rel="stylesheet" th:href="@{/css/home/home.css}">
+</head>
+<body>
+<header class="header">
+	<h1>ファイル入出力 練習アプリ</h1>
+	<p>CSV / Excel / PDF / AWS</p>
+</header>
+<main class="container">
+	<section class="card">
+		<h2>エクスポート</h2>
+		<div class="button-group">
+			<a th:href="@{/csvExport}" class="btn primary">CSV 出力</a>
+			<a th:href="@{/excelExport}" class="btn primary">Excel 出力</a>
+			<a th:href="@{/pdf}" class="btn primary">PDF 出力</a>
+			<a th:href="@{/invoice}" class="btn primary">請求書 出力</a>
+		</div>
+	</section>
+	<section class="card">
+		<h2>インポート</h2>
+		<div class="button-group">
+			<a th:href="@{/csvImport}" class="btn success">CSV 取込</a>
+	    	<a th:href="@{/excelImport}" class="btn success">Excel 取込</a>
+		</div>
+	</section>
+	<section class="card">
+		<h2>AWS</h2>
+		<div class="button-group">
+			<a th:href="@{/s3}" class="btn primary">CSV S3格納</a>
+		</div>
+	</section>
+	<section class="card">
+	    <h2>DBビュー</h2>
+	    <div class="button-group">
+	        <a th:href="@{/dbView}" class="btn primary">
+	            DB / テーブル参照
+	        </a>
+	    </div>
+	</section>
+
+</main>
+</body>
+</html>

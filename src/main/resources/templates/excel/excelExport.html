@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - Excel出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>Excel出力サンプル</h1>
+	<p>エスケープ処理含む</p>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/excelExport/update}" method="post" class="search-form">
+			<div class="form-group">
+				<label>出力単位</label>
+				<select name="fileMode" id="fileMode">
+					<option value="SINGLE" th:selected="${fileMode != null and fileMode.name() == 'SINGLE'}">1ファイル</option>
+					<option value="MULTI" th:selected="${fileMode != null and fileMode.name() == 'MULTI'}">複数ファイル</option>
+				</select>
+			</div>
+				
+			<div class="form-group" id="multiModeArea">
+				<label>複数時の出力方法</label>
+				<select name="multiMode">
+					<option value="MULTI_SHEET" th:selected="${multiMode != null and multiMode.name() == 'MULTI_SHEET'}">複数シート</option>
+					<option value="ZIP" th:selected="${multiMode != null and multiMode.name() == 'ZIP'}">ZIP</option>
+				</select>
+			</div>
+				
+			<button type="submit" class="btn success">
+				excel出力
+			</button>
+			
+			<a href="/home" class="btn default">戻る</a>
+			
+			<div class="note">
+				※「複数シート」は1ファイルで管理しやすくおすすめです。
+			</div>
+		</form>
+	</section>
+
+	<!-- 一覧 -->
+	<section class="result-area">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名前</th>
+					<th>有効</th>
+					<th>生年月日</th>
+					<th>作成日時</th>
+					<th>スコア</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${list}">
+					<td th:text="${row.id}"></td>
+					<td th:text="${row.name}"></td>
+					<td th:text="${row.active}"></td>
+					<td th:text="${row.birthDate}"></td>
+					<td th:text="${#temporals.format(row.updatedAt, 'yyyy/MM/dd HH:mm:ss')}"></td>
+					<td th:text="${row.score}"></td>
+					<td th:text="${row.note}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<!-- excelダウンロード用（自動submit） -->
+	<form id="downloadForm"
+	      th:action="@{/excelExport/download}"
+	      method="post">
+		  <input type="hidden" name="fileMode" th:value="${fileMode}">
+		  <input type="hidden" name="multiMode" th:value="${multiMode}">
+	</form>
+</main>
+<script th:inline="javascript">
+	const fileMode = document.getElementById("fileMode");
+	const multiArea = document.getElementById("multiModeArea");
+	
+	// 複数時の出力方法の非活性制御
+	toggleMultiMode();
+	fileMode.addEventListener("change", toggleMultiMode);
+	
+	// 複数ファイル選択時の出力方法の表示切替
+	function toggleMultiMode() {
+	    multiArea.style.display =
+	        fileMode.value === "MULTI" ? "flex" : "none";
+	}
+	
+	// 自動ダウンロード処理
+	window.onload = function () {
+		const autoDownload = /*[[${autoDownload}]]*/ false;
+		
+		if (autoDownload) {
+			document.getElementById("downloadForm").submit();
+		}
+	};
+</script>
+
+</body>
+</html>

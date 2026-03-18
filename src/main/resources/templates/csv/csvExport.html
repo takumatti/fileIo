@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>fileIo - CSV出力サンプル</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="header">
+	<h1>CSV出力サンプル</h1>
+	<p>エスケープ処理含む</p>
+</header>
+
+<main class="container">
+
+	<!-- 操作エリア -->
+	<section class="search-area">
+		<form th:action="@{/csvExport/update}" method="post" class="search-form">
+			<div class="form-group">
+				<label>文字コード</label>
+				<select name="encoding">
+					<option value="UTF-8" th:selected="${encoding == 'UTF-8'}" selected>UTF-8</option>
+					<option value="SHIFT_JIS" th:selected="${encoding == 'SHIFT_JIS'}">Shift-JIS</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label>ダブルクォート</label>
+				<select name="quoteMode">
+					<option value="ALL" th:selected="${quoteMode != null and quoteMode.name() == 'ALL'}">すべて囲う</option>
+					<option value="NONE" th:selected="${quoteMode != null and quoteMode.name() == 'NONE'}">囲わない</option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label>出力単位</label>
+				<select name="fileMode" id="fileMode">
+					<option value="SINGLE" th:selected="${fileMode != null and fileMode.name() == 'SINGLE'}">1ファイル</option>
+					<option value="MULTI" th:selected="${fileMode != null and fileMode.name() == 'MULTI'}">複数ファイル</option>
+				</select>
+			</div>
+			
+			<div class="form-group" id="multiModeArea">
+				<label>複数時の出力方法</label>
+				<select name="multiMode">
+					<option value="ZIP" th:selected="${multiMode != null and multiMode.name() == 'ZIP'}">ZIPにまとめる</option>
+					<option value="INDIVIDUAL" th:selected="${multiMode != null and multiMode.name() == 'INDIVIDUAL'}">個別（非推奨）</option>
+				</select>
+			</div>
+
+			<button type="submit" class="btn success">
+				CSV出力
+			</button>
+			
+			<a href="/home" class="btn default">戻る</a>
+			
+			<div class="note">
+				※「複数ファイル × 個別」はブラウザ仕様上推奨されません。ZIPを推奨します。
+			</div>
+		</form>
+	</section>
+
+	<!-- 一覧 -->
+	<section class="result-area">
+		<table>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>名前</th>
+					<th>有効</th>
+					<th>生年月日</th>
+					<th>作成日時</th>
+					<th>スコア</th>
+					<th>備考</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="row : ${list}">
+					<td th:text="${row.id}"></td>
+					<td th:text="${row.name}"></td>
+					<td th:text="${row.active}"></td>
+					<td th:text="${row.birthDate}"></td>
+					<td th:text="${#temporals.format(row.updatedAt, 'yyyy/MM/dd HH:mm:ss')}"></td>
+					<td th:text="${row.score}"></td>
+					<td th:text="${row.note}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<!-- CSVダウンロード用（自動submit） -->
+	<form id="downloadForm"
+	      th:action="@{/csvExport/download}"
+	      method="post">
+		<input type="hidden" name="encoding" th:value="${encoding}">
+		<input type="hidden" name="quoteMode" th:value="${quoteMode}">
+		<input type="hidden" name="fileMode" th:value="${fileMode}">
+		<input type="hidden" name="multiMode" th:value="${multiMode}">
+	</form>
+</main>
+<script th:inline="javascript">
+	const fileMode = document.getElementById("fileMode");
+	const multiArea = document.getElementById("multiModeArea");
+	
+	// 複数時の出力方法の非活性制御
+	toggleMultiMode();
+	fileMode.addEventListener("change", toggleMultiMode);
+	
+	function toggleMultiMode() {
+	    multiArea.style.display =
+	        fileMode.value === "MULTI" ? "flex" : "none";
+	}
+	
+	// 自動ダウンロード処理
+	window.onload = function () {
+		const autoDownload = /*[[${autoDownload}]]*/ false;
+		
+		if (autoDownload) {
+			document.getElementById("downloadForm").submit();
+		}
+	};
+</script>
+
+</body>
+</html>

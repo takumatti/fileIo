@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.mapper.dbView.DbViewMapper">
+    <select id="selectSchemas" resultType="string">
+        SELECT schema_name
+        FROM information_schema.schemata
+        WHERE schema_name NOT IN (
+            'pg_catalog',
+            'information_schema'
+        )
+        ORDER BY schema_name
+    </select>
+    <select id="selectTables" resultType="string">
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = #{schemaName}
+        ORDER BY table_name
+    </select>
+    <select id="selectTableData" resultType="java.util.LinkedHashMap">
+        SELECT *
+        FROM ${schemaName}.${tableName}
+        LIMIT 100
+    </select>
+    <select id="selectColumnInfos" resultType="io.dto.dbView.ColumnInfo">
+    	SELECT 
+        	c.column_name AS columnName,
+        	c.data_type   AS columnType,
+        	CASE WHEN is_nullable='NO' THEN true ELSE false END AS notNull,
+        	CASE WHEN tc.constraint_type = 'PRIMARY KEY' THEN true ELSE false END AS primaryKey
+    	FROM information_schema.columns c
+    	LEFT JOIN information_schema.key_column_usage kcu
+           ON c.table_schema = kcu.table_schema
+          AND c.table_name = kcu.table_name
+          AND c.column_name = kcu.column_name
+    	LEFT JOIN information_schema.table_constraints tc
+           ON kcu.table_schema = tc.table_schema
+          AND kcu.table_name = tc.table_name
+          AND kcu.constraint_name = tc.constraint_name
+          AND tc.constraint_type = 'PRIMARY KEY'
+    	WHERE c.table_schema = #{schemaName}
+      	  AND c.table_name = #{tableName}
+    	ORDER BY c.ordinal_position
+	</select>
+</mapper>

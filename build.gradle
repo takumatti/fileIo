@@ -1,0 +1,129 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.10-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'io'
+version = '0.0.1-SNAPSHOT'
+description = 'file ioproject for Spring Boot'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url = 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+
+	// ================================
+	// Web / MVC 基本構成
+	// ================================
+
+	// Spring MVC（Controller / RestController / Tomcat）
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Thymeleaf（HTMLテンプレートエンジン）
+	// 画面表示用HTML・PDF用HTMLの両方に利用
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// 入力チェック（@NotNull, @Size など）
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
+	// ================================
+	// DB / ORM / SQL
+	// ================================
+
+	// MyBatis（SQLベースでのDB操作）
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
+	// PostgreSQL JDBCドライバ
+	runtimeOnly 'org.postgresql:postgresql'
+
+
+	// ================================
+	// PDF / 帳票生成
+	// ================================
+
+	// HTML + CSS から PDF を生成（日本語フォント対応可）
+	// 請求書・帳票・レポート用途
+	implementation "com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10"
+
+
+	// ================================
+	// Excel / Office ファイル操作
+	// ================================
+
+	// Excel（.xlsx）操作用（帳票出力・取込など）
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+	// POI コア（HSSF / 共通処理）
+	implementation 'org.apache.poi:poi:5.2.5'
+
+
+	// ================================
+	// 開発支援
+	// ================================
+
+	// Lombok（@Getter @Setter @Builder など）
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// ホットリロード（保存時に自動再起動）
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+
+	// ================================
+	// テスト
+	// ================================
+
+	// Spring Boot テスト（JUnit / MockMvc など）
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// JUnit Platform 実行ランチャー
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
+	// ============================
+    // AWS SDK v2 BOM（バージョン一元管理）
+    // ============================
+    implementation platform('software.amazon.awssdk:bom:2.25.64')
+	
+	// ============================
+    // AWS SDK v2（S3用）
+    // ============================
+
+    // S3 クライアント本体
+    // AtmsS3FileManager で使っている S3Client / PutObjectRequest / RequestBody
+    implementation 'software.amazon.awssdk:s3'
+
+    // 認証情報プロバイダ用
+    // AwsBasicCredentials / StaticCredentialsProvider を使用
+    implementation 'software.amazon.awssdk:auth'
+
+    // リージョン定義用
+    // Region.of(region) を使うため
+    implementation 'software.amazon.awssdk:regions'
+    
+    // ============================
+    // AWS SDK v2（EC2 メタデータ認証情報プロバイダ用）
+    // ============================
+    // EC2 メタデータ認証情報プロバイダ用
+    implementation 'software.amazon.awssdk:ec2'
+}
+
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
